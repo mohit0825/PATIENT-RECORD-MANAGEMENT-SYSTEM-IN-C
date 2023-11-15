@@ -1,0 +1,331 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+struct cl_patient
+{
+    char first_name[20];
+    char last_name[20];
+    char patient_add[200];
+    char patient_phonenumber[15];
+    char patient_cnic[15];
+    int patient_age;
+    char patient_gender[8];
+    char patient_bloodtype[5];
+    char patient_disease_pt[50];
+    int patient_id;
+    char patient_symptom[500];
+    char patient_diagnosis[500];
+    char patient_medicine[500];
+    char patient_admission[30];
+    struct cl_patient *next;
+    bool diagnose_patient;
+};
+struct cl_patient *header = nullptr, *last_partner = nullptr;
+int array[20] = {0};
+int v = 0;
+bool check_id(int ch)
+{
+    for (int y = 0; y < v; y++)
+    {
+        if (ch == array[y])
+        {
+            return true;
+        }
+    }
+    return false;
+}
+class Doctor
+{
+public:
+    void add()
+    {
+        cl_patient *pat = new cl_patient;
+        pat->diagnose_patient = false;
+        cout << "Enter Patient ID: ";
+        cin >> pat->patient_id;
+        cout << "Enter Patient First Name: ";
+        cin >> pat->first_name;
+        cout << "Enter Patient Last Name: ";
+        cin >> pat->last_name;
+        cout << "Enter Patient Age: ";
+        cin >> pat->patient_age;
+        cout << "Enter Patient Gender: ";
+        cin >> pat->patient_gender;
+        cout << "Enter Patient Blood Group: ";
+        cin >> pat->patient_bloodtype;
+        cout << "Enter Patient Contact: ";
+        cin >> pat->patient_phonenumber;
+        cout << "Enter Patient CNIC: ";
+        cin >> pat->patient_cnic;
+        cin.ignore(); 
+        cout << "Enter Patient Address: ";
+        cin.getline(pat->patient_add, 200);
+        pat->next = nullptr;
+        array[v] = pat->patient_id;
+        v++;
+        if (header == nullptr)
+        {
+            header = pat;
+            last_partner = pat;
+        }
+        else
+        {
+            last_partner->next = pat;
+            last_partner = pat;
+        }
+    }
+    void show()
+    {
+        int change;
+        cout << "Enter Patient ID: ";
+        cin >> change;
+        if (check_id(change))
+        {
+            cl_patient *cur = header;
+            while (cur != nullptr)
+            {
+                if (cur->patient_id == change)
+                {
+                    cout << "Patient First Name: " << cur->first_name << "\n";
+                    cout << "Patient Last Name: " << cur->last_name << "\n";
+                    cout << "Patient ID: " << cur->patient_id << "\n";
+                    cout << "Patient Age: " << cur->patient_age << "\n";
+                    cout << "Patient Gender: " << cur->patient_gender << "\n";
+                    cout << "Patient Blood Type: " << cur->patient_bloodtype << "\n";
+                    cout << "Patient Contact: " << cur->patient_phonenumber << "\n";
+                    cout << "Patient CNIC: " << cur->patient_cnic << "\n";
+                    cout << "Patient Address: " << cur->patient_add << "\n";
+                    cout << "*********************************\n";
+                    if (cur->diagnose_patient)
+                    {
+                        cout << "Symptoms: " << cur->patient_symptom << "\n";
+                        cout << "Diagnosis: " << cur->patient_diagnosis << "\n";
+                        cout << "Medicines: " << cur->patient_medicine << "\n";
+                        cout << "Admit Required to Hospital: " << cur->patient_admission << "\n";
+                    }
+                }
+                cur = cur->next;
+            }
+        }
+        else
+        {
+            cout << "ID not present" << endl;
+        }
+    }
+    void diagnosis()
+    {
+        int change;
+        cout << "Enter Patient ID: ";
+        cin >> change;
+        if (check_id(change))
+        {
+            cl_patient *cur = header;
+            while (cur != nullptr)
+            {
+                if (cur->patient_id == change)
+                {
+                    cur->diagnose_patient = true;
+                    cout << "Enter Symptoms: ";
+                    cin >> cur->patient_symptom;
+                    cout << "Enter Diagnosis: ";
+                    cin >> cur->patient_diagnosis;
+                    cout << "Enter Medicines: ";
+                    cin >> cur->patient_medicine;
+                    cout << "Admit Required to Hospital? ";
+                    cin >> cur->patient_admission;
+                }
+                cur = cur->next;
+            }
+        }
+        else
+        {
+            cout << "ID not present" << endl;
+        }
+    }
+    void deleteList()
+    {
+        int change;
+        cout << "Enter the ID to delete: ";
+        cin >> change;
+        if (check_id(change))
+        {
+            cl_patient *cur = header;
+            cl_patient *prev = nullptr;
+            while (cur != nullptr && cur->patient_id != change)
+            {
+                prev = cur;
+                cur = cur->next;
+            }
+            if (cur == nullptr)
+            {
+                cout << "ID not found" << endl;
+                return;
+            }
+            if (prev != nullptr)
+            {
+                prev->next = cur->next;
+            }
+            else
+            {
+                header = cur->next;
+            }
+            delete cur;
+            for (int i = 0; i < v; ++i)
+            {
+                if (array[i] == change)
+                {
+                    for (int j = i; j < v - 1; ++j)
+                    {
+                        array[j] = array[j + 1];
+                    }
+                    v--;
+                }
+            }
+            cout << "Successfully deleted the patient with ID " << change << endl;
+        }
+        else
+        {
+            cout << "ID not present" << endl;
+        }
+    }
+    void update_menu()
+    {
+        cout << "Choose what to update:\n";
+        cout << "[1] Patient First Name\n";
+        cout << "[2] Patient Last Name\n";
+        cout << "[3] Patient Age\n";
+        cout << "[4] Patient Gender\n";
+        cout << "[5] Patient Blood Type\n";
+        cout << "[6] Patient Phone Number\n";
+        cout << "[7] Patient CNIC\n";
+        cout << "[8] Patient Address\n";
+        cout << "[9] Symptoms\n";
+        cout << "[10] Diagnosis\n";
+        cout << "[11] Medicines\n";
+        cout << "[12] Admit Required to Hospital\n";
+        cout << "Enter your choice: ";
+    }
+    void update_data()
+    {
+        int patient_id;
+        cout << "Enter Patient ID: ";
+        cin >> patient_id;
+        if (check_id(patient_id))
+        {
+            cl_patient *cur = header;
+            while (cur != nullptr)
+            {
+                if (cur->patient_id == patient_id)
+                {
+                    update_menu();
+                    int choice;
+                    cin >> choice;
+                    switch (choice)
+                    {
+                    case 1:
+                        cout << "Enter First Name: ";
+                        cin >> cur->first_name;
+                        break;
+                    case 2:
+                        cout << "Enter Last Name: ";
+                        cin >> cur->last_name;
+                        break;
+                    case 3:
+                        cout << "Enter Age: ";
+                        cin >> cur->patient_age;
+                        break;
+                    case 4:
+                        cout << "Enter Gender: ";
+                        cin >> cur->patient_gender;
+                        break;
+                    case 5:
+                        cout << "Enter Blood Type: ";
+                        cin >> cur->patient_bloodtype;
+                        break;
+                    case 6:
+                        cout << "Enter Phone Number: ";
+                        cin >> cur->patient_phonenumber;
+                        break;
+                    case 7:
+                        cout << "Enter CNIC: ";
+                        cin >> cur->patient_cnic;
+                        break;
+                    case 8:
+                        cin.ignore(); 
+                        cout << "Enter Address: ";
+                        cin.getline(cur->patient_add, 200);
+                        break;
+                    case 9:
+                        cout << "Enter Symptoms: ";
+                        cin >> cur->patient_symptom;
+                        break;
+                    case 10:
+                        cout << "Enter Diagnosis: ";
+                        cin >> cur->patient_diagnosis;
+                        break;
+                    case 11:
+                        cout << "Enter Medicines: ";
+                        cin >> cur->patient_medicine;
+                        break;
+                    case 12:
+                        cout << "Admit Required to Hospital: ";
+                        cin >> cur->patient_admission;
+                        break;
+                    default:
+                        cout << "Invalid choice." << endl;
+                        break;
+                    }
+                    cout << "Update successful." << endl;
+                }
+                cur = cur->next;
+            }
+        }
+        else
+        {
+            cout << "ID not present" << endl;
+        }
+    }
+};
+void display_menu()
+{
+    cout << "|=================================|\n";
+    cout << "| [1] Add New Patient Record      |\n";
+    cout << "| [2] Add Patient Prescription    |\n";
+    cout << "| [3] Full History of the Patient |\n";
+    cout << "| [4] Delete Patient Record       |\n";
+    cout << "| [5] Update Patient Record       |\n";
+    cout << "|=================================|\n";
+    cout << "Enter the number you want to Choose: ";
+}
+int main()
+{
+    Doctor m;
+    int choice;
+    do
+    {
+        display_menu();
+        cin >> choice;
+        switch (choice)
+        {
+        case 1:
+            m.add();
+            break;
+        case 2:
+            m.diagnosis();
+            break;
+        case 3:
+            m.show();
+            break;
+        case 4:
+            m.deleteList();
+            break;
+        case 5:
+            m.update_data();
+            break;
+        default:
+            cout << "Invalid choice." << endl;
+            break;
+        }
+    } while (true);
+    return 0;
+}
